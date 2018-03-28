@@ -17,6 +17,15 @@
     </footer>
   </template>
   <script>
+    function minutesAgo(minutes) {
+      const date = new Date(Date.now() - minutes * 60000);
+      return date.toISOString().substr(0, 10);
+    }
+
+    function daysAgo(days) {
+      return minutesAgo(days * 1440);
+    }
+
     function githubTask(name, query) {
       // These two URLs for the API and the website should be in sync, different views of the same data.
       const BASE_API_URL = "https://api.github.com/search/issues?q=repo%3Aw3c%2Fweb-platform-tests%20";
@@ -46,17 +55,32 @@
       ready() {
         super.ready();
 
-        const taskInfo = [
+        const toplevelTaskInfo = [
           { name: 'issues with no label', query: 'is:issue is:open no:label' },
           { name: 'PRs without owner', query: 'is:pr is:open label:status:needs-owners' },
         ];
 
-        this.groups = [
+        const groups = [
           {
-            name: 'web-platform-tests triage',
-            tasks: taskInfo.map(info => githubTask(info.name, info.query)),
+            name: 'top-level triage',
+            tasks: toplevelTaskInfo.map(info => githubTask(info.name, info.query)),
           },
         ];
+
+        const labels = ['docs', 'infra', 'policy'];
+        for (const label of labels) {
+          const labelTaskInfo = [
+            { name: 'new open issues (no comments)', query: `is:issue is:open label:${label} comments:0` },
+            { name: 'old open issues (>90 days)', query: `is:issue is:open label:${label} updated:<${daysAgo(90)}` },
+            { name: 'open PRs', query: `is:pr is:open label:${label}` },
+          ];
+          groups.push({
+            name: `${label} label triage`,
+            tasks: labelTaskInfo.map(info => githubTask(info.name, info.query)),
+          });
+        }
+
+        this.groups = groups;
       }
     }
 
