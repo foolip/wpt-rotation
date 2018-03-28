@@ -57,7 +57,9 @@
 
         const toplevelTaskInfo = [
           { name: 'issues with no label', query: 'is:issue is:open no:label' },
+          { name: 'old issues (>1 year)', query: `is:issue is:open updated:<${daysAgo(365)}` },
           { name: 'PRs without owner', query: 'is:pr is:open label:status:needs-owners' },
+          { name: 'old PRs (>180 days)', query: `is:pr is:open updated:<${daysAgo(180)}` },
         ];
 
         const groups = [
