@@ -1,0 +1,65 @@
+<link rel="import" href="../bower_components/polymer/polymer-element.html">
+<link rel="import" href="../bower_components/paper-styles/typography.html">
+<link rel="import" href="./rotation-task-group.html">
+
+<dom-module id="wpt-rotation">
+  <template>
+    <style>
+      :host {
+        @apply(--paper-font-common-base);
+      }
+    </style>
+    <template is='dom-repeat' as='group' items='[[groups]]'>
+      <rotation-task-group name='[[group.name]]' tasks='[[group.tasks]]'></rotation-task-group>
+    </template>
+    <footer>
+      <p>source on <a href="https://github.com/foolip/wpt-rotation">GitHub</a></p>
+    </footer>
+  </template>
+  <script>
+    function githubTask(name, query) {
+      // These two URLs for the API and the website should be in sync, different views of the same data.
+      const BASE_API_URL = "https://api.github.com/search/issues?q=repo%3Aw3c%2Fweb-platform-tests%20";
+      const BASE_WEB_URL = "https://github.com/w3c/web-platform-tests/issues?q=";
+
+      const apiURL = `${BASE_API_URL}${encodeURIComponent(query)}`;
+      const webURL = `${BASE_WEB_URL}${encodeURIComponent(query)}`;
+
+      return {
+        name: name,
+        href: webURL,
+        status: fetch(apiURL).then(r => r.json()).then(r => r.total_count),
+      };
+    }
+
+    class WPTRotation extends Polymer.Element {
+      static get is() {
+        return 'wpt-rotation';
+      }
+
+      static get properties() {
+        return {
+          groups: Array,
+        };
+      }
+
+      ready() {
+        super.ready();
+
+        const taskInfo = [
+          { name: 'issues with no label', query: 'is:issue is:open no:label' },
+          { name: 'PRs without owner', query: 'is:pr is:open label:status:needs-owners' },
+        ];
+
+        this.groups = [
+          {
+            name: 'web-platform-tests triage',
+            tasks: taskInfo.map(info => githubTask(info.name, info.query)),
+          },
+        ];
+      }
+    }
+
+    customElements.define(WPTRotation.is, WPTRotation);
+  </script>
+</dom-module>
