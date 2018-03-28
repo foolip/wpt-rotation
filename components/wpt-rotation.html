@@ -56,7 +56,7 @@
         super.ready();
 
         const toplevelTaskInfo = [
-          { name: 'issues with no label', query: 'is:issue is:open no:label' },
+          { name: 'unlabeled issues', query: 'is:issue is:open no:label' },
           { name: 'old issues (>1 year)', query: `is:issue is:open updated:<${daysAgo(365)}` },
           { name: 'PRs without owner', query: 'is:pr is:open label:status:needs-owners' },
           { name: 'old PRs (>180 days)', query: `is:pr is:open updated:<${daysAgo(180)}` },
@@ -72,8 +72,8 @@
         const labels = ['docs', 'infra', 'policy'];
         for (const label of labels) {
           const labelTaskInfo = [
-            { name: 'new open issues (no comments)', query: `is:issue is:open label:${label} comments:0` },
-            { name: 'old open issues (>90 days)', query: `is:issue is:open label:${label} updated:<${daysAgo(90)}` },
+            { name: 'new issues (no comments)', query: `is:issue is:open label:${label} comments:0` },
+            { name: 'old issues (>90 days)', query: `is:issue is:open label:${label} updated:<${daysAgo(90)}` },
             { name: 'open PRs', query: `is:pr is:open label:${label}` },
           ];
           groups.push({
