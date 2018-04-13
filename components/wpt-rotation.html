@@ -17,13 +17,27 @@
     </footer>
   </template>
   <script>
+    const now = Date.now();
+
     function minutesAgo(minutes) {
-      const date = new Date(Date.now() - minutes * 60000);
+      const date = new Date(now - minutes * 60000);
       return date.toISOString().substr(0, 10);
     }
 
     function daysAgo(days) {
       return minutesAgo(days * 1440);
+    }
+
+    function monthsAgo(months) {
+      const date = new Date(now);
+      // Yes, this actually works with negative months:
+      // https://tc39.github.io/ecma262/#sec-date.prototype.setutcmonth
+      date.setUTCMonth(date.getUTCMonth() - months);
+      return date.toISOString().substr(0, 10);
+    }
+
+    function yearsAgo(years) {
+      return monthsAgo(years * 12);
     }
 
     function githubTask(name, query) {
@@ -57,9 +71,9 @@
 
         const toplevelTaskInfo = [
           { name: 'unlabeled issues', query: 'is:issue is:open no:label' },
-          { name: 'old issues (>1 year)', query: `is:issue is:open updated:<${daysAgo(365)}` },
+          { name: 'old issues (>3 years)', query: `is:issue is:open updated:<${yearsAgo(3)}` },
           { name: 'PRs without owner', query: 'is:pr is:open label:status:needs-owners' },
-          { name: 'old PRs (>1 year)', query: `is:pr is:open updated:<${daysAgo(365)}` },
+          { name: 'old PRs (>1 year)', query: `is:pr is:open updated:<${yearsAgo(1)}` },
         ];
 
         const groups = [
@@ -73,7 +87,7 @@
         for (const label of labels) {
           const labelTaskInfo = [
             { name: 'new issues (no comments)', query: `is:issue is:open label:${label} comments:0` },
-            { name: 'old issues (>90 days)', query: `is:issue is:open label:${label} updated:<${daysAgo(90)}` },
+            { name: 'old issues (>1 month)', query: `is:issue is:open label:${label} updated:<${monthsAgo(1)}` },
             { name: 'open PRs', query: `is:pr is:open label:${label}` },
           ];
           groups.push({
