@@ -72,7 +72,7 @@
         const toplevelTaskInfo = [
           { name: 'unlabeled issues', query: 'is:issue is:open no:label' },
           { name: 'old issues (>3 years)', query: `is:issue is:open updated:<${yearsAgo(3)} sort:updated-asc` },
-          { name: 'PRs without owner', query: 'is:pr is:open label:status:needs-owners' },
+          { name: 'PRs without owner', query: 'is:pr is:open label:status:needs-owners  sort:updated-asc' },
           { name: 'old PRs (>1 year)', query: `is:pr is:open updated:<${yearsAgo(1)} sort:updated-asc` },
         ];
 
@@ -88,7 +88,7 @@
           const labelTaskInfo = [
             { name: 'new issues (no comments)', query: `is:issue is:open label:${label} comments:0` },
             { name: 'old issues (>1 month)', query: `is:issue is:open label:${label} updated:<${monthsAgo(1)} sort:updated-asc` },
-            { name: 'open PRs', query: `is:pr is:open label:${label}` },
+            { name: 'open PRs', query: `is:pr is:open label:${label} sort:updated-asc` },
           ];
           groups.push({
             name: `${label} label triage`,
