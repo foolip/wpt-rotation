@@ -86,7 +86,7 @@
         const labels = ['docs', 'infra', 'policy'];
         for (const label of labels) {
           const labelTaskInfo = [
-            { name: 'new issues (no comments)', query: `is:issue is:open label:${label} comments:0` },
+            { name: 'new issues (no comments, unconfirmed)', query: `is:issue is:open label:${label} -label:"status:confirmed" comments:0` },
             { name: 'old issues (>1 year)', query: `is:issue is:open label:${label} updated:<${yearsAgo(1)} sort:updated-asc` },
             { name: 'open PRs', query: `is:pr is:open label:${label} sort:updated-asc` },
           ];
